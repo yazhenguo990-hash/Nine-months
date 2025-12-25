@@ -1,12 +1,23 @@
-
-import { defineConfig } from 'vite';
+import path from 'path';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
-  plugins: [react()],
-  define: {
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
-  },
-  // 如果你的仓库名不是 username.github.io，请修改下面的 base 为 '/你的仓库名/'
-  base: './', 
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, '.', '');
+    return {
+      server: {
+        port: 3000,
+        host: '0.0.0.0',
+      },
+      plugins: [react()],
+      define: {
+        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, '.'),
+        }
+      }
+    };
 });
